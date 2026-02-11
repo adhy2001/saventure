@@ -64,6 +64,7 @@ body {
 .nav-logo {
     height: 60px;
     width: auto;
+    filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.5));
 }
 
 .brand-text {
@@ -154,7 +155,7 @@ body {
     position: absolute;
     inset: 0;
     background: var(--white);
-    background-image: url('images/hero-artistic-bg.png');
+    background-image: url('images/hero-artistic-bg.jpeg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -219,10 +220,10 @@ body {
 }
 
 .hero-title .highlight {
-    background: var(--gradient-1);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    background: none;
+    -webkit-text-fill-color: white;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .hero-subtitle {
