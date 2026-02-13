@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initWorkSlider();
     initFooterHeroBackground();
     initChatbot();
+    initHeroParallax();
 });
 
 /* Navbar scroll effect */
@@ -446,3 +447,72 @@ function initChatbot() {
         if (e.key === 'Enter') sendMessage();
     });
 }
+
+/* Hero 3D Object Mouse Interaction */
+function initHeroInteraction() {
+    const hero = document.querySelector('.hero');
+    const cubeWrapper = document.querySelector('.cube-wrapper');
+
+    if (!hero || !cubeWrapper) return;
+
+    hero.addEventListener('mousemove', (e) => {
+        const rect = hero.getBoundingClientRect();
+        const x = e.clientX - rect.left; // Mouse X within hero
+        const y = e.clientY - rect.top;  // Mouse Y within hero
+
+        // Calculate positions relative to center (-1 to 1)
+        const xPos = (x / rect.width - 0.5) * 2;
+        const yPos = (y / rect.height - 0.5) * 2;
+
+        // Rotation intensity
+        const rotateX = yPos * -15; // Invert Y for natural feel
+        const rotateY = xPos * 15;
+
+        // Apply transform (Preserve floating animation via wrapper nesting if needed, 
+        // but here we are rotating the wrapper itself. 
+        // Note: The wrapper has 'floatingObj' animation. 
+        // Transforming it directly might override the animation unless we are careful.
+        // CSS Animation affects 'transform'. JS setting 'transform' overrides it.
+        // Better Strategy: Apply mouse rotation to the .hero-3d-object container 
+        // which surrounds the wrapper, OR use a separate container.
+        // Let's verify existing structure: .hero-3d-object -> .cube-wrapper -> .cube
+        // .hero-3d-object is absolute positioned.
+        // .cube-wrapper has floating animation.
+        // .cube has rotating animation.
+        // Let's select .hero-3d-object for the mouse interaction to avoid conflicts.
+    });
+}
+
+/* REVISED Mouse Interaction - Targeting .hero-3d-object to avoid animation conflict */
+function initHeroParallax() {
+    const hero = document.querySelector('.hero');
+    const container = document.querySelector('.hero-3d-object');
+
+    if (!hero || !container) return;
+
+    // Add transition for smoothness via JS or CSS check
+    container.style.transition = 'transform 0.1s ease-out';
+    container.style.transformStyle = 'preserve-3d'; // Ensure 3D context
+
+    hero.addEventListener('mousemove', (e) => {
+        const rect = hero.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        const x = (e.clientX - centerX) / (rect.width / 2);
+        const y = (e.clientY - centerY) / (rect.height / 2);
+
+        // Tilt effect
+        const rotateX = y * -15;
+        const rotateY = x * 15;
+
+        // Apply to container
+        container.style.transform = `translateY(-50%) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    });
+
+    // Reset on mouse leave
+    hero.addEventListener('mouseleave', () => {
+        container.style.transform = 'translateY(-50%) rotateX(0deg) rotateY(0deg)';
+    });
+}
+
