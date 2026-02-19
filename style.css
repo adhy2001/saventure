@@ -226,6 +226,13 @@ body {
     .hero-buttons {
         justify-content: center;
     }
+
+    /* Fix for mobile hero background */
+    .hero {
+        background-attachment: scroll;
+        height: auto;
+        min-height: 100vh;
+    }
 }
 
 /* ========================================

@@ -1,6 +1,6 @@
-# Loud IMC Portfolio
+# Saventure Portfolio
 
-A responsive portfolio website for Loud IMC, a creative agency specializing in digital transformation and innovative marketing solutions.
+A responsive portfolio website for Saventure, a creative agency specializing in digital transformation and innovative marketing solutions.
 
 ## Features
 

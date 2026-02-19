@@ -1,5 +1,5 @@
 /* ========================================
-   LOUD IMC - Scripts
+   SAVENTURE - Scripts
    ======================================== */
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -409,7 +409,7 @@ function initFooterHeroBackground() {
 function initChatbot() {
     // data is now loaded via script tag: chatbot-data.js
     const botData = typeof LOUD_CHAT_DATA !== 'undefined' ? LOUD_CHAT_DATA : {
-        config: { introMessage: "Welcome to Loud IMC! How can I help you today?" },
+        config: { introMessage: "Welcome to Saventure! How can I help you today?" },
         knowledgeBase: [],
         fallback: "I'm having trouble accessing my full knowledge base. Please reach out to our team via the Contact page!"
     };

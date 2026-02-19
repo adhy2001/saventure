@@ -1,7 +1,7 @@
 const LOUD_CHAT_DATA = {
     "config": {
         "botName": "Sara",
-        "introMessage": "Welcome to Loud IMC! I'm Sara. How can I assist you with your digital transformation or branding needs today?"
+        "introMessage": "Welcome to Saventure! I'm Sara. How can I assist you with your digital transformation or branding needs today?"
     },
     "knowledgeBase": [
         {
@@ -10,7 +10,7 @@ const LOUD_CHAT_DATA = {
                 "thank",
                 "thanks"
             ],
-            "response": "You're very welcome! At Loud IMC, we're dedicated to helping brands find their unique voice and achieve sustainable growth. It's our passion to see our clients succeed. Is there anything else I can help you with?"
+            "response": "You're very welcome! At Saventure, we're dedicated to helping brands find their unique voice and achieve sustainable growth. It's our passion to see our clients succeed. Is there anything else I can help you with?"
         },
         {
             "id": "affirmative",
@@ -30,7 +30,7 @@ const LOUD_CHAT_DATA = {
                 "hi",
                 "hey"
             ],
-            "response": "Hello! I'm Sara, the virtual strategist for Loud IMC. We specialize in creative digital transformation. How can I help you amplify your brand today?"
+            "response": "Hello! I'm Sara, the virtual strategist for Saventure. We specialize in creative digital transformation. How can I help you amplify your brand today?"
         },
         {
             "id": "identity",
@@ -38,7 +38,7 @@ const LOUD_CHAT_DATA = {
                 "who are you",
                 "about sara"
             ],
-            "response": "I am Sara, Loud IMC's AI assistant. My mission is to provide you with insights into our capabilities and connect you with our strategy team."
+            "response": "I am Sara, Saventure's AI assistant. My mission is to provide you with insights into our capabilities and connect you with our strategy team."
         },
         {
             "id": "services",
@@ -47,7 +47,7 @@ const LOUD_CHAT_DATA = {
                 "what do you do",
                 "capabilities"
             ],
-            "response": "Loud IMC offers a comprehensive 360-degree approach including Branding, Strategy, and Digital Transformation. I'd love to help you find the right fit. You can visit our Contact page for a free consultation."
+            "response": "Saventure offers a comprehensive 360-degree approach including Branding, Strategy, and Digital Transformation. I'd love to help you find the right fit. You can visit our Contact page for a free consultation."
         },
         {
             "id": "fmcg",
