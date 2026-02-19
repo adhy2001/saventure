@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initNavbar();
     initAOS();
     initCounters();
-    initContactForm();
+    initFormValidation();
     initParticles();
     initSliderDuplicate();
     initHeroTitleSlider();
@@ -15,20 +15,66 @@ document.addEventListener('DOMContentLoaded', function () {
     initFooterHeroBackground();
     initChatbot();
     initHeroParallax();
+    initScrollTop();
+    renderBlogs(); // Dynamic blogs
+    initFooterBgScroll(); // New function call
+    initAnalytics(); // Interactions tracking
 });
+
+/* ... (previous functions remains same) ... */
+
+/* Scroll to Top Button */
+function initScrollTop() {
+    // Create button
+    const btn = document.createElement('button');
+    btn.className = 'scroll-top';
+    btn.innerHTML = '<i class="fas fa-arrow-up"></i>';
+    btn.setAttribute('aria-label', 'Scroll to top');
+    document.body.appendChild(btn);
+
+    // Toggle visibility on scroll
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            btn.classList.add('visible');
+        } else {
+            btn.classList.remove('visible');
+        }
+    });
+
+    // Scroll to top on click
+    btn.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+        trackEvent('Navigation', 'Scroll to Top');
+    });
+}
 
 /* Navbar scroll effect */
 function initNavbar() {
     const navbar = document.querySelector('.navbar');
     if (!navbar) return;
 
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
-        }
-    });
+    const hero = document.querySelector('.hero');
+
+    if (hero) {
+        // Homepage with Hero: Transparent -> Solid on scroll
+        const updateNavbar = () => {
+            const threshold = hero.offsetHeight - 80; // Triggers when passing hero
+            if (window.scrollY > threshold) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        };
+
+        window.addEventListener('scroll', updateNavbar);
+        updateNavbar(); // Initial check
+    } else {
+        // Internal Pages: Always Solid
+        navbar.classList.add('scrolled');
+    }
 }
 
 /* AOS (Animate On Scroll) */
@@ -42,6 +88,7 @@ function initAOS() {
         });
     }
 }
+
 
 /* Counter animation */
 function initCounters() {
@@ -60,6 +107,7 @@ function initCounters() {
                 const target = parseInt(counter.getAttribute('data-target')) || 0;
                 animateCounter(counter, target);
                 observer.unobserve(counter);
+                trackEvent('Engagement', 'Counter Animation', counter.getAttribute('data-label') || 'Unnamed Counter');
             }
         });
     }, observerOptions);
@@ -89,40 +137,65 @@ function animateCounter(element, target) {
     requestAnimationFrame(updateCounter);
 }
 
-/* Contact form */
-function initContactForm() {
-    const form = document.getElementById('contactForm');
-    if (!form) return;
+/* Form Validation & Premium Feedback */
+function initFormValidation() {
+    const form = document.querySelector('form'); // General target or specific ID
+    const premiumForm = document.getElementById('premiumContactForm');
+    const targetForm = premiumForm || form;
 
-    form.addEventListener('submit', function (e) {
+    if (!targetForm) return;
+
+    targetForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const btn = form.querySelector('button[type="submit"]');
-        const originalText = btn.textContent;
-        btn.textContent = 'Sending...';
+        trackEvent('Conversion', 'Form Submission Attempt', targetForm.id || 'General Form');
+
+        const btn = targetForm.querySelector('button[type="submit"]');
+        const inputs = targetForm.querySelectorAll('[required]');
+        let isValid = true;
+
+        // Basic Validation
+        inputs.forEach(input => {
+            if (!input.value.trim()) {
+                input.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                input.classList.remove('is-invalid');
+            }
+        });
+
+        if (!isValid) {
+            trackEvent('Conversion', 'Form Validation Error', 'Missing required fields');
+            return;
+        }
+
+        // Simulate Submission
+        const originalBtnHTML = btn.innerHTML;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>SENDING...';
         btn.disabled = true;
 
-        const formData = new FormData(form);
+        try {
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            targetForm.reset();
+            trackEvent('Conversion', 'Form Submission Success', targetForm.id || 'General Form');
+        } catch (error) {
+            trackEvent('Conversion', 'Form Submission Error', error.message);
+        } finally {
+            btn.innerHTML = originalBtnHTML;
+            btn.disabled = false;
+        }
+    });
 
-        sendEmail(formData)
-            .then(() => {
-                btn.textContent = 'Message Sent!';
-                form.reset();
-                setTimeout(() => {
-                    btn.textContent = originalText;
-                    btn.disabled = false;
-                }, 2000);
-            })
-            .catch((error) => {
-                console.error('Email send failed:', error);
-                btn.textContent = 'Error! Try again.';
-                setTimeout(() => {
-                    btn.textContent = originalText;
-                    btn.disabled = false;
-                }, 2000);
-            });
+    // Real-time validation feedback
+    targetForm.querySelectorAll('.form-control').forEach(input => {
+        input.addEventListener('input', () => {
+            if (input.value.trim()) {
+                input.classList.remove('is-invalid');
+            }
+        });
     });
 }
 
+/* Hero particles effect */
 /* Hero particles effect */
 function initParticles() {
     const container = document.getElementById('heroParticles');
@@ -176,6 +249,7 @@ function initHeroTitleSlider() {
         titles[index].classList.remove('hero-title-active');
         index = (index + 1) % titles.length;
         titles[index].classList.add('hero-title-active');
+        trackEvent('Engagement', 'Hero Title Slide', titles[index].textContent.trim());
     }
 
     setInterval(showNext, interval);
@@ -243,6 +317,7 @@ function initWorkSlider() {
         if (currentIndex > 0) {
             currentIndex--;
             updateSlider();
+            trackEvent('Navigation', 'Work Slider', 'Previous');
         }
     });
 
@@ -251,6 +326,7 @@ function initWorkSlider() {
         if (currentIndex < maxIndex) {
             currentIndex++;
             updateSlider();
+            trackEvent('Navigation', 'Work Slider', 'Next');
         }
     });
 
@@ -272,6 +348,7 @@ function initWorkSlider() {
         isDragging = true;
         startPos = e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
         track.style.cursor = 'grabbing';
+        trackEvent('Engagement', 'Work Slider Drag', 'Start');
     }
 
     function drag(e) {
@@ -299,6 +376,7 @@ function initWorkSlider() {
 
         updateSlider();
         prevTranslate = currentIndex * scrollAmount * -1;
+        trackEvent('Engagement', 'Work Slider Drag', 'End');
     }
 
     // Initialize
@@ -329,35 +407,46 @@ function initFooterHeroBackground() {
 
 /* AI Chatbot "Sara" Logic */
 function initChatbot() {
+    // data is now loaded via script tag: chatbot-data.js
+    const botData = typeof LOUD_CHAT_DATA !== 'undefined' ? LOUD_CHAT_DATA : {
+        config: { introMessage: "Welcome to Loud IMC! How can I help you today?" },
+        knowledgeBase: [],
+        fallback: "I'm having trouble accessing my full knowledge base. Please reach out to our team via the Contact page!"
+    };
+
     // Prevent duplicate injection
     if (document.getElementById('loudChatWidget')) return;
 
     // Create Chat Widget HTML
     const chatHTML = `
-        <button class="chat-widget-toggle" id="chatToggle" aria-label="Open Chat">
+        <button class="chat-widget-toggle" id="chatToggle" aria-label="Open Chat Assistant">
             <i class="fas fa-comment-dots"></i>
+            <span class="chat-badge" id="chatBadge" aria-hidden="true"></span>
         </button>
 
         <div class="chat-widget" id="loudChatWidget">
             <div class="chat-header">
                 <div class="chat-header-info">
                     <div class="chat-avatar">
-                        <i class="fas fa-robot"></i>
+                        <i class="fas fa-user-tie"></i>
                     </div>
                     <div class="chat-title">
                         <h4>Sara</h4>
                         <span>AI Assistant • Online</span>
                     </div>
                 </div>
-                <button class="chat-close" id="chatClose" aria-label="Close Chat">
+                <button class="chat-close" id="chatClose" aria-label="Close Chat Assistant">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             
-            <div class="chat-messages" id="chatMessages">
-                <div class="message bot">
-                    Hello! I'm Sara, your virtual assistant. How can I help you elevate your brand today?
-                </div>
+            <div class="chat-messages" id="chatMessages"></div>
+            
+            <div class="chat-quick-actions" id="chatQuickActions">
+                <button class="quick-action-btn" data-query="Services">Services</button>
+                <button class="quick-action-btn" data-query="FMCG Sector">FMCG</button>
+                <button class="quick-action-btn" data-query="Medical Sector">Medical</button>
+                <button class="quick-action-btn" data-query="How to contact?">Contact</button>
             </div>
             
             <div class="chat-input-area">
@@ -374,6 +463,14 @@ function initChatbot() {
     div.innerHTML = chatHTML;
     document.body.appendChild(div);
 
+    // Update Quick Actions from JSON
+    if (botData.quickActions) {
+        const qaContainer = document.getElementById('chatQuickActions');
+        qaContainer.innerHTML = botData.quickActions.map(action =>
+            `<button class="quick-action-btn" data-query="${action.query}" aria-label="Ask about ${action.label}">${action.label}</button>`
+        ).join('');
+    }
+
     // Elements
     const toggleBtn = document.getElementById('chatToggle');
     const closeBtn = document.getElementById('chatClose');
@@ -381,64 +478,109 @@ function initChatbot() {
     const input = document.getElementById('chatInput');
     const sendBtn = document.getElementById('chatSend');
     const messages = document.getElementById('chatMessages');
+    const qaContainer = document.getElementById('chatQuickActions');
+    const chatBadge = document.getElementById('chatBadge');
 
     // Toggle Chat
     function toggleChat() {
         widget.classList.toggle('active');
         const icon = toggleBtn.querySelector('i');
+
+        // Remove badge on first open
+        if (chatBadge) chatBadge.remove();
+
         if (widget.classList.contains('active')) {
             icon.classList.remove('fa-comment-dots');
             icon.classList.add('fa-chevron-down');
             input.focus();
+
+            // Initial greeting if empty
+            if (messages.children.length === 0) {
+                setTimeout(() => {
+                    addMessage(botData.config.introMessage, 'bot');
+                }, 500);
+            }
+            trackEvent('Chatbot', 'Toggle Chat', 'Open');
         } else {
             icon.classList.remove('fa-chevron-down');
             icon.classList.add('fa-comment-dots');
+            trackEvent('Chatbot', 'Toggle Chat', 'Close');
         }
     }
 
     toggleBtn.addEventListener('click', toggleChat);
-    closeBtn.addEventListener('click', toggleChat);
+
+    // Dynamic Knowledge Base Logic
+    function getBotResponse(input) {
+        const query = input.toLowerCase();
+
+        // Search through knowledge base
+        for (const item of botData.knowledgeBase) {
+            if (item.keywords.some(key => query.includes(key))) {
+                return item.response;
+            }
+        }
+
+        // Return fallback
+        return botData.fallback;
+    }
 
     // Send Message Logic
     function sendMessage() {
         const text = input.value.trim();
-        if (!text) return;
+        if (text === '') return;
 
-        // User Message
         addMessage(text, 'user');
         input.value = '';
 
-        // Simulate Bot Typing/Response
+        // Show typing indicator
+        const typingId = showTypingIndicator();
+
+        // Bot Response with delay
         setTimeout(() => {
+            removeTypingIndicator(typingId);
             const response = getBotResponse(text);
             addMessage(response, 'bot');
-        }, 1000);
+        }, 800 + (text.length * 10)); // Variable delay based on length
+    }
+
+    // Show/Remove Typing
+    function showTypingIndicator() {
+        const id = 'typing-' + Date.now();
+        const typingDiv = document.createElement('div');
+        typingDiv.id = id;
+        typingDiv.classList.add('message', 'bot', 'typing-indicator');
+        typingDiv.innerHTML = '<span></span><span></span><span></span>';
+        messages.appendChild(typingDiv);
+        messages.scrollTop = messages.scrollHeight;
+        return id;
+    }
+
+    function removeTypingIndicator(id) {
+        const indicator = document.getElementById(id);
+        if (indicator) indicator.remove();
     }
 
     // Add Message to UI
     function addMessage(text, sender) {
         const msgDiv = document.createElement('div');
         msgDiv.classList.add('message', sender);
-        msgDiv.textContent = text;
+
+        // Add animation style
+        msgDiv.style.opacity = '0';
+        msgDiv.style.transform = 'translateY(10px)';
+
+        msgDiv.innerHTML = text.replace(/\n/g, '<br>');
         messages.appendChild(msgDiv);
+
+        // Trigger reflow for animation
+        setTimeout(() => {
+            msgDiv.style.transition = 'all 0.3s ease';
+            msgDiv.style.opacity = '1';
+            msgDiv.style.transform = 'translateY(0)';
+        }, 10);
+
         messages.scrollTop = messages.scrollHeight;
-    }
-
-    // Basic Response Logic
-    function getBotResponse(input) {
-        const lowerInput = input.toLowerCase();
-
-        if (lowerInput.includes('hello') || lowerInput.includes('hi')) {
-            return "Hi there! Welcome to Loud IMC. What brings you here?";
-        } else if (lowerInput.includes('service') || lowerInput.includes('help')) {
-            return "We offer a range of services from comprehensive branding to digital transformation. Check out our Capabilities section!";
-        } else if (lowerInput.includes('contact') || lowerInput.includes('email')) {
-            return "You can reach us directly via the contact form below or email at hello@loudimc.com.";
-        } else if (lowerInput.includes('price') || lowerInput.includes('cost')) {
-            return "Our pricing is tailored to each project's unique needs. We'd love to discuss your requirements!";
-        } else {
-            return "That's interesting! While I'm still learning, our team would love to hear more. Please fill out the contact form!";
-        }
     }
 
     // Event Listeners
@@ -446,42 +588,21 @@ function initChatbot() {
     input.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') sendMessage();
     });
-}
 
-/* Hero 3D Object Mouse Interaction */
-function initHeroInteraction() {
-    const hero = document.querySelector('.hero');
-    const cubeWrapper = document.querySelector('.cube-wrapper');
+    closeBtn.addEventListener('click', toggleChat);
 
-    if (!hero || !cubeWrapper) return;
-
-    hero.addEventListener('mousemove', (e) => {
-        const rect = hero.getBoundingClientRect();
-        const x = e.clientX - rect.left; // Mouse X within hero
-        const y = e.clientY - rect.top;  // Mouse Y within hero
-
-        // Calculate positions relative to center (-1 to 1)
-        const xPos = (x / rect.width - 0.5) * 2;
-        const yPos = (y / rect.height - 0.5) * 2;
-
-        // Rotation intensity
-        const rotateX = yPos * -15; // Invert Y for natural feel
-        const rotateY = xPos * 15;
-
-        // Apply transform (Preserve floating animation via wrapper nesting if needed, 
-        // but here we are rotating the wrapper itself. 
-        // Note: The wrapper has 'floatingObj' animation. 
-        // Transforming it directly might override the animation unless we are careful.
-        // CSS Animation affects 'transform'. JS setting 'transform' overrides it.
-        // Better Strategy: Apply mouse rotation to the .hero-3d-object container 
-        // which surrounds the wrapper, OR use a separate container.
-        // Let's verify existing structure: .hero-3d-object -> .cube-wrapper -> .cube
-        // .hero-3d-object is absolute positioned.
-        // .cube-wrapper has floating animation.
-        // .cube has rotating animation.
-        // Let's select .hero-3d-object for the mouse interaction to avoid conflicts.
+    // Quick Action Listeners
+    qaContainer.addEventListener('click', (e) => {
+        const btn = e.target.closest('.quick-action-btn');
+        if (btn) {
+            const query = btn.getAttribute('data-query');
+            input.value = query;
+            sendMessage();
+        }
     });
 }
+
+
 
 /* REVISED Mouse Interaction - Targeting .hero-3d-object to avoid animation conflict */
 function initHeroParallax() {
@@ -515,4 +636,36 @@ function initHeroParallax() {
         container.style.transform = 'translateY(-50%) rotateX(0deg) rotateY(0deg)';
     });
 }
+
+/* Dynamic Blog Rendering */
+function renderBlogs() {
+    const container = document.getElementById('blogContainer');
+    if (!container || typeof LOUD_BLOG_DATA === 'undefined') {
+        console.warn('Blog container or data missing');
+        return;
+    }
+
+    // Clear existing (if any)
+    container.innerHTML = '';
+
+    LOUD_BLOG_DATA.forEach(article => {
+        const blogCard = `
+            <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="${article.delay}">
+                <div class="blog-card h-100 shadow-sm border-0">
+                    <div class="blog-image-wrapper">
+                        <img src="${article.image}" class="img-fluid" alt="${article.title}" style="width: 100%; height: 200px; object-fit: cover;">
+                        <div class="blog-category" style="position: absolute; top: 1rem; left: 1rem; background: var(--primary); color: white; padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.75rem; font-weight: 600;">${article.category}</div>
+                    </div>
+                    <div class="blog-content p-4 bg-white">
+                        <h3 class="h5 mb-3 fw-bold">${article.title}</h3>
+                        <p class="text-muted small mb-4">${article.excerpt}</p>
+                        <a href="${article.link}" class="blog-read-more text-decoration-none fw-bold" style="color: var(--primary);">Read More <i class="fas fa-arrow-right ms-2"></i></a>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', blogCard);
+    });
+}
+
 
