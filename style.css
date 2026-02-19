@@ -228,13 +228,6 @@ body {
     .hero-buttons {
         justify-content: center;
     }
-
-    /* Fix for mobile hero background */
-    .hero {
-        background-attachment: scroll;
-        height: auto;
-        min-height: 100vh;
-    }
 }
 
 /* ========================================
@@ -361,6 +354,17 @@ body {
 .hero-image-container,
 .hero-particles {
     display: none;
+}
+
+/* Mobile hero image fix - must be AFTER main .hero rule */
+@media (max-width: 991px) {
+    .hero {
+        background-attachment: scroll !important;
+        background-size: cover !important;
+        background-position: center center !important;
+        min-height: 100svh;
+        height: 100svh;
+    }
 }
 
 
