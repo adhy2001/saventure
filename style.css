@@ -41,6 +41,8 @@
 
 html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
+    max-width: 100%;
 }
 
 body {
@@ -242,18 +244,16 @@ body {
 .hero {
     position: relative;
     height: 100vh;
-    /* Full viewport height */
     width: 100%;
+    max-width: 100vw;
     display: flex;
     align-items: flex-start;
-    /* Align to top to control vertical position manually */
     overflow: hidden;
     padding-top: 0;
     background-image: url('images/we_meet copy.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    /* Parallax feel */
     color: var(--white);
 }
 
@@ -531,6 +531,7 @@ section {
 .logo-slider-container {
     position: relative;
     width: 100%;
+    max-width: 100vw;
     overflow: hidden;
 }
 
