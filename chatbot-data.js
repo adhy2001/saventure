@@ -1,7 +1,7 @@
 const LOUD_CHAT_DATA = {
     "config": {
         "botName": "Sara",
-        "introMessage": "Welcome to Saventure! I'm Sara. How can I assist you with your digital transformation or branding needs today?"
+        "introMessage": "Welcome to Saventure! I'm Sara. How can I assist you ? "
     },
     "knowledgeBase": [
         {
@@ -30,7 +30,7 @@ const LOUD_CHAT_DATA = {
                 "hi",
                 "hey"
             ],
-            "response": "Hello! I'm Sara, the virtual strategist for Saventure. We specialize in creative digital transformation. How can I help you amplify your brand today?"
+            "response": "Hello! I'm Sara, the virtual strategist for Saventure."
         },
         {
             "id": "identity",
@@ -66,12 +66,10 @@ const LOUD_CHAT_DATA = {
         },
         {
             "id": "international",
-            "keywords": [
-                "uae",
-                "sharjah",
-                "international"
+            "keyword": [
+                "uae"
             ],
-            "response": "We have a strong international presence in the UAE at the Sharjah Research Technology and Innovation Park. Looking to expand to the Middle East? Simply head to our Contact page and let's connect."
+            "response": "We have a strong international presence in the UAE . Looking to expand ! Simply head to our Contact page and let's connect."
         },
         {
             "id": "contact_details",
@@ -93,7 +91,7 @@ const LOUD_CHAT_DATA = {
             "response": "Pricing is tailored to your unique goals. I recommend setting up a consultation so we can provide an accurate quote. You can request one via our Contact page."
         }
     ],
-    "fallback": "That's a great question! While I'm specialized in our core sectors, our human experts would love to give you a more detailed answer. You can connect with them through our Contact page.",
+    "fallback": "That's a great question! While I'm specialized in our core sectors, our experts would love to give you a more detailed answer. You can connect with them through our Contact page.",
     "quickActions": [
         {
             "label": "Services",
