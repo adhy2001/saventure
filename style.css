@@ -1791,21 +1791,7 @@ section {
     line-height: 1;
 }
 
-@font-face {
-    font-family: 'Outfit';
-    src: url('fonts/Outfit-VariableFont_wght.ttf') format('truetype');
-    font-weight: 100 900;
-    font-display: swap;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Sora';
-    src: url('fonts/Sora-VariableFont_wght.ttf') format('truetype');
-    font-weight: 100 800;
-    font-display: swap;
-    font-style: normal;
-}
+/* Removed local font-face to rely on Google Fonts preload */
 
 .chat-send {
     width: 45px;

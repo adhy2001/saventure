@@ -2,6 +2,11 @@
    SAVENTURE - Scripts
    ======================================== */
 
+// Dummy functions to prevent console errors
+function trackEvent(category, action, label) { }
+function initFooterBgScroll() { }
+function initAnalytics() { }
+
 document.addEventListener('DOMContentLoaded', function () {
     initNavbar();
     initAOS();
